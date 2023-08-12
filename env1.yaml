@@ -1,4 +1,4 @@
-name: transnormer
+name: hgrn
 channels:
   - defaults
 dependencies:
