@@ -2,72 +2,137 @@ import os
 import sys
 import time
 
+# change
+use_decay = True
 PREFIX = "your path to lra"
 
 batches = {
-    "cifar": [200],
-    "imdb": 64,
+    "cifar": 50,
+    "imdb": 32,
     "listops": 128,
     "pathfinder": 128,
-    "pathfinderx": 64,
+    "pathfinderx": 16,
     "aan": 64,
 }
 
 gpus = {
-    "cifar": 2,
-    "imdb": 4,
+    "cifar": 1,
+    "imdb": 2,
     "listops": 2,
-    "pathfinder": 4,
-    "pathfinderx": 8,
-    "aan": 2,
+    "pathfinder": 1,
+    "pathfinderx": 4,
+    "aan": 1,
 }
 
 d_model_dict = {
-    "cifar": 128,
-    "imdb": 128,
-    "listops": 128,
-    "pathfinder": 128,
+    "cifar": 512,
+    "imdb": [128],
+    "listops": 32,
+    "pathfinder": [128],
     "pathfinderx": 64,
-    "aan": 128,
+    "aan": 64,
 }
 
 n_layers_dict = {
-    "cifar": 12,
+    "cifar": [6],
     "imdb": [4],
-    "listops": 4,
-    "pathfinder": 4,
+    "listops": [6],
+    "pathfinder": 6,
     "pathfinderx": 6,
-    "aan": 4,
-}
-
-expand_ratio_ffn_dict = {
-    "cifar": 2,
-    "imdb": 4,
-    "listops": 4,
-    "pathfinder": 1,
-    "pathfinderx": 2.5,
-    "aan": 4,
+    "aan": 2,
 }
 
 norm_dict = {
-    "cifar": "synbatch",
+    "cifar": "batch",
     "imdb": "synbatch",
     "listops": "synbatch",
-    "pathfinder": "synbatch",
+    "pathfinder": "batch",
     "pathfinderx": "synbatch",
-    "aan": "synbatch",
+    "aan": "batch",
 }
 
 lr_dict = {
-    "cifar": [0.001],
-    "imdb": [0.001],
-    "listops": 0.0001,
-    "pathfinder": [0.0005,],
-    "pathfinderx": [0.0001],
-    "aan": [0.001],
+    "cifar": [3e-3], 
+    "imdb": [0.005],
+    "listops": [0.0005],
+    "pathfinder": [2e-3],
+    "pathfinderx": [0.00075],
+    "aan": [0.005], 
+}
+
+wd_dict = {
+    "cifar": 0,
+    "imdb": [0],
+    "listops": [0.01],
+    "pathfinder": 0,
+    "pathfinderx": 0,
+    "aan": [0,], 
+}
+
+dropout_dict = {
+    "cifar": [0],
+    "imdb": 0.1,
+    "listops": [0],
+    "pathfinder": 0,
+    "pathfinderx": 0,
+    "aan": [0],
 }
 
 prenorm_dict = {
+    "cifar": [True],
+    "imdb": True,
+    "listops": True,
+    "pathfinder": [True,],
+    "pathfinderx": True,
+    "aan": True,
+}
+
+warmup_steps_dict = {
+    "cifar": 30000,
+    "imdb": [10000],
+    "listops": [5000],
+    "pathfinder": [50000],
+    "pathfinderx": [150000],
+    "aan": [312],
+}
+
+training_steps_dict = {
+    "cifar": 50000,
+    "imdb": 50000,
+    "listops": [50000],
+    "pathfinder": [500000,],
+    "pathfinderx": 500000,
+    "aan": [50000],
+}
+
+expand_ratio_glu_dict = {
+    "cifar": 1,
+    "imdb": [1],
+    "listops": [1],
+    "pathfinder": [1],
+    "pathfinderx": 1,
+    "aan": [2],
+}
+
+param_share_dict = {
+    "cifar": False,
+    "imdb": False,
+    "listops": False,
+    "pathfinder": False,
+    "pathfinderx": False,
+    "aan": False,
+}
+
+training_epochs_dict = {
+    "cifar": [100],
+    "imdb": 32,
+    "listops": [50],
+    "pathfinder": [200],
+    "pathfinderx": 100,
+    "aan": [20],
+}
+
+use_lower_bound_dict = {
     "cifar": True,
     "imdb": True,
     "listops": True,
@@ -76,30 +141,45 @@ prenorm_dict = {
     "aan": True,
 }
 
-head_dict = {
-    "cifar": 4,
-    "imdb": 8,
-    "listops": 8,
-    "pathfinder": 8,
-    "pathfinderx": 8,
-    "aan": 4,
+# # for ablation
+# use_lower_bound_dict = {
+#     "cifar": False,
+#     "imdb": False,
+#     "listops": False,
+#     "pathfinder": False,
+#     "pathfinderx": False,
+#     "aan": False,
+# }
+
+causal_dict = {
+    "cifar": False,
+    "imdb": False,
+    "listops": [False],
+    "pathfinder": False,
+    "pathfinderx": False,
+    "aan": False,
 }
 
+use_real_dict = {
+    "cifar": False,
+    "imdb": False,
+    "listops": False,
+    "pathfinder": False,
+    "pathfinderx": False,
+    "aan": False,
+}
 
-archs = ["transnormer"]
+encoder_dict = {
+    "cifar": "position",
+    "imdb": "position",
+    "listops": "position",
+    "pathfinder": "id",
+    "pathfinderx": "id",
+    "aan": "position",
+}
 
-tasks = ["aan"]
-tasks = ["imdb"]
-tasks = ["listops"]
-tasks = ["cifar"]
-tasks = ["pathfinder"]
-
-# t1
-model_config = [[False, "elu"]]
-
-# # t2
-# model_config = [[True, "1+elu"]]
-
+tasks = ["aan", "imdb", "listops", "cifar", "pathfinder", "pathfinderx"]
+archs = ["hgrn"]
 
 def to_iter(*args):
     n = len(args)
@@ -131,15 +211,23 @@ def helper(*args):
 for i, task in enumerate(tasks):
     pars = to_iter(
         archs,
-        batches[task],
-        lr_dict[task],
         n_layers_dict[task],
         d_model_dict[task],
+        batches[task],
         norm_dict[task],
+        lr_dict[task],
+        wd_dict[task],
+        dropout_dict[task],
         prenorm_dict[task],
-        model_config,
-        expand_ratio_ffn_dict[task],
-        head_dict[task],
+        warmup_steps_dict[task],
+        training_steps_dict[task],
+        expand_ratio_glu_dict[task],
+        param_share_dict[task],
+        training_epochs_dict[task],
+        use_lower_bound_dict[task],
+        causal_dict[task],
+        use_real_dict[task],
+        encoder_dict[task],
     )
     print(pars)
     print(task)
@@ -147,94 +235,41 @@ for i, task in enumerate(tasks):
     time.sleep(10)
     for (
         arch,
-        total_batch,
-        lr,
         n_layers,
         d_model,
+        total_batch,
         norm,
+        lr,
+        wd,
+        dropout,
         prenorm,
-        config,
-        expand_ratio_ffn,
-        num_heads,
+        warmup_steps,
+        training_steps,
+        expand_ratio_glu,
+        param_share,
+        training_epochs,
+        use_lower_bound,
+        causal,
+        use_real,
+        encoder,
     ) in pars:
-        use_softmax, act_fun = config
-        print(use_softmax, act_fun)
-        if task == "imdb":
-            seq_len = 4096
-            gpu = gpus[task]
-            batch = total_batch // gpu
-            workers = gpu * 20
-            for i in range(1):
-                print("imdb lr: ", lr)
-                time.sleep(10)
-                pid = os.fork()
-                if pid == 0:
-                    os.system(
-                        f"sh {PREFIX}/train_lra.sh {task} {arch} {total_batch} {lr} {n_layers} {d_model} {norm} {prenorm} {use_softmax} {act_fun} {expand_ratio_ffn} {num_heads} {gpu}"
-                    )
-                    sys.exit(0)
-        elif task == "cifar":
-            seq_len = 1024
-            gpu = gpus[task]
-            batch = total_batch // gpu
-            workers = gpu * 20
-            print("cifar lr: ", lr)
-            time.sleep(10)
+        gpu = gpus[task]
+        batch = total_batch // gpu
+        workers = gpu * 20
+        print("imdb lr: ", lr)
+        if task == "cifar":
+            # time.sleep(10)
             pid = os.fork()
             if pid == 0:
                 os.system(
-                    f"sh {PREFIX}/train_lra.sh {task} {arch} {total_batch} {lr} {n_layers} {d_model} {norm} {prenorm} {use_softmax} {act_fun} {expand_ratio_ffn} {num_heads} {gpu}"
+                    f"sh {PREFIX}/train_lra_image.sh {task} {arch} {batch} {n_layers} {d_model} {norm} {lr} {wd} {gpu} {workers} {dropout} {prenorm} {warmup_steps} {training_steps} {expand_ratio_glu} {param_share} {training_epochs} {use_lower_bound} {causal} {use_real} {encoder}"
                 )
                 sys.exit(0)
-        elif task == "listops":
-            seq_len = 2048
-            gpu = gpus[task]
-            batch = total_batch // gpu
-            workers = gpu * 20
-            print("listops lr: ", lr)
-            time.sleep(10)
+        else:
+            # time.sleep(10)
             pid = os.fork()
             if pid == 0:
                 os.system(
-                    f"sh {PREFIX}/train_lra.sh {task} {arch} {total_batch} {lr} {n_layers} {d_model} {norm} {prenorm} {use_softmax} {act_fun} {expand_ratio_ffn} {num_heads} {gpu}"
-                )
-                sys.exit(0)
-        elif task == "pathfinder":
-            seq_len = 1024
-            gpu = gpus[task]
-            batch = total_batch // gpu
-            workers = gpu * 20
-            print("pathfinder lr: ", lr)
-            time.sleep(10)
-            pid = os.fork()
-            if pid == 0:
-                os.system(
-                    f"sh {PREFIX}/train_lra.sh {task} {arch} {total_batch} {lr} {n_layers} {d_model} {norm} {prenorm} {use_softmax} {act_fun} {expand_ratio_ffn} {num_heads} {gpu}"
-                )
-                sys.exit(0)
-        elif task == "pathfinderx":
-            seq_len = 128 * 128
-            gpu = gpus[task]
-            batch = total_batch // gpu
-            workers = gpu * 20
-            print("pathfinderx lr: ", lr)
-            time.sleep(10)
-            pid = os.fork()
-            if pid == 0:
-                os.system(
-                    f"sh {PREFIX}/train_lra.sh {task} {arch} {total_batch} {lr} {n_layers} {d_model} {norm} {prenorm} {use_softmax} {act_fun} {expand_ratio_ffn} {num_heads} {gpu}"
-                )
-                sys.exit(0)
-        elif task == "aan":
-            seq_len = 4000
-            gpu = gpus[task]
-            batch = total_batch // gpu
-            workers = gpu * 20
-            print("aan lr: ", lr)
-            time.sleep(10)
-            pid = os.fork()
-            if pid == 0:
-                os.system(
-                    f"sh {PREFIX}/train_lra.sh {task} {arch} {total_batch} {lr} {n_layers} {d_model} {norm} {prenorm} {use_softmax} {act_fun} {expand_ratio_ffn} {num_heads} {gpu}"
+                    f"sh {PREFIX}/train_lra.sh {task} {arch} {batch} {n_layers} {d_model} {norm} {lr} {wd} {gpu} {workers} {dropout} {prenorm} {warmup_steps} {training_steps} {expand_ratio_glu} {param_share} {training_epochs} {use_lower_bound} {causal} {use_real} {encoder}"
                 )
                 sys.exit(0)

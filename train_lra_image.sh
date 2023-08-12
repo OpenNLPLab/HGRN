@@ -27,6 +27,7 @@ encoder=${21}
 
 echo ${cards}
 
+
 mkdir -p logs
 START_TIME=`date +%Y%m%d-%H:%M:%S`
 
@@ -38,7 +39,7 @@ scheduler.num_warmup_steps=${warmup_steps} \
 scheduler.num_training_steps=${training_steps} \
 optimizer.lr=${lr} optimizer.weight_decay=${wd} \
 model.n_layers=${N_LAYERS} model.d_model=${D_MODEL} \
-model.norm=${NORM} model.prenorm=${PRENORM} train.seed=2222 \
+model.norm=${NORM} model.prenorm=True train.seed=2222 \
 model.param_share=${param_share} \
 model.dropout=${dropout} \
 model.expand_ratio_glu=${expand_ratio_glu} \
@@ -47,4 +48,6 @@ trainer.max_epochs=${training_epochs} \
 model.use_real=${use_real} \
 model.causal=${causal} \
 model.encoder=${encoder} \
+dataset.grayscale=false \
+dataset.augment=true \
 decoder.mode=pool | tee logs/${START_TIME}_${ARCH}-lra-${TASK}.log

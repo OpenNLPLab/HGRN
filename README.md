@@ -35,14 +35,14 @@ pip install torch-1.8.1+cu111-cp36-cp36m-linux_x86_64.whl
 pip install -r requirements_hgrn.txt
 ```
 
-Then install `hgru-pytorch`:
+Install `hgru-pytorch`:
 ```
 conda activate hgrn
 cd hgru-pytorch
 pip install .
 ```
 
-Finaly install our version of fairseq:
+Install our version of fairseq:
 
 ```
 cd fairseq
@@ -65,29 +65,46 @@ conda env create --file env2.yaml
 
 #### 1) Preprocess the data
 
-First download and prepare the [WikiText-103 dataset](https://www.salesforce.com/products/einstein/ai-research/the-wikitext-dependency-language-modeling-dataset/):
+First download the [WikiText-103 dataset](https://www.salesforce.com/products/einstein/ai-research/the-wikitext-dependency-language-modeling-dataset/):
 
 ```
-path_to_fairseq=fairseq
-cd $path_to_fairseq/examples/language_model/
-bash prepare-wikitext-103.sh
-cd ../..
+wget https://s3.amazonaws.com/research.metamind.io/wikitext/wikitext-103-raw-v1.zip
+unzip wikitext-103-raw-v1.zip
 ```
 
-Next preprocess/binarize the data:
+Next, encode it with the GPT-2 BPE:
 
 ```
-TEXT=examples/language_model/wikitext-103
+mkdir -p gpt2_bpe
+wget -O gpt2_bpe/encoder.json https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/encoder.json
+wget -O gpt2_bpe/vocab.bpe https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/vocab.bpe
+for SPLIT in train valid test; do \
+    python -m examples.roberta.multiprocessing_bpe_encoder \
+        --encoder-json gpt2_bpe/encoder.json \
+        --vocab-bpe gpt2_bpe/vocab.bpe \
+        --inputs wikitext-103-raw/wiki.${SPLIT}.raw \
+        --outputs wikitext-103-raw/wiki.${SPLIT}.bpe \
+        --keep-empty \
+        --workers 60; \
+done
+```
+
+Finally, preprocess/binarize the data using the GPT-2 fairseq dictionary:
+
+```
+wget -O gpt2_bpe/dict.txt https://dl.fbaipublicfiles.com/fairseq/gpt2_bpe/dict.txt
 fairseq-preprocess \
     --only-source \
-    --trainpref $TEXT/wiki.train.tokens \
-    --validpref $TEXT/wiki.valid.tokens \
-    --testpref $TEXT/wiki.test.tokens \
+    --srcdict gpt2_bpe/dict.txt \
+    --trainpref wikitext-103-raw/wiki.train.bpe \
+    --validpref wikitext-103-raw/wiki.valid.bpe \
+    --testpref wikitext-103-raw/wiki.test.bpe \
     --destdir data-bin/wikitext-103 \
-    --workers 20
+    --workers 60
 ```
 
-This step comes from [fairseq](https://github.com/facebookresearch/fairseq/blob/main/examples/language_model/README.md).
+This step comes from [fairseq](https://github.com/facebookresearch/fairseq/blob/main/examples/roberta/README.pretraining.md).
+
 
 
 
@@ -131,7 +148,7 @@ tar -xvf lra_release.tar.gz
 
 #### 2) Training
 
-Use the following script to run the experiments, you should change `PREFIX` to your lra path, change `tasks` to a specific task and change `model_config` to t1 or t2:
+Use the following script to run the experiments, you should change `PREFIX` to your lra path, change `tasks` to a specific task:
 
 ```
 python script_lra.py
@@ -140,5 +157,5 @@ python script_lra.py
 
 
 ## Standalone code
-See hgru-pytorch
+See hgru-pytorch.
 

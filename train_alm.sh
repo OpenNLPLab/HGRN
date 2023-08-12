@@ -16,15 +16,17 @@ UPDATE_FREQ=$(( 128 / $BATCH_SIZE / $GPUS ))
 
 echo $PORT
 
+mkdir -p logs
+
 fairseq-train --task language_modeling \
     $DATA_DIR \
     --save-dir checkpoints/$prefix/$ARCH \
     --distributed-world-size $GPUS  \
     --arch $ARCH --share-decoder-input-output-embed \
     --dropout 0.1 \
-    --optimizer adam --adam-betas '(0.9, 0.98)' --weight-decay 0.01 --clip-norm $CLIP_NORM \
+    --optimizer adam --adam-betas '(0.9, 0.98)' --weight-decay 0.2 --clip-norm $CLIP_NORM \
     --lr $LR --lr-scheduler inverse_sqrt --warmup-updates $WARM_UP --warmup-init-lr 1e-07 \
     --tokens-per-sample $TOKENS_PER_SAMPLE --sample-break-mode none \
     --max-tokens $MAX_TOKEN --update-freq $UPDATE_FREQ \
     --batch-size $BATCH_SIZE \
-    --max-update $MAX_UPDATE --log-interval 1  2>&1 | tee $ARCH.log
+    --max-update $MAX_UPDATE --log-interval 1  2>&1 | tee logs/$ARCH.log
