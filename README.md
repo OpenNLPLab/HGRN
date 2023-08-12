@@ -35,14 +35,14 @@ pip install torch-1.8.1+cu111-cp36-cp36m-linux_x86_64.whl
 pip install -r requirements_hgrn.txt
 ```
 
-Install `hgru-pytorch`:
+Then, install `hgru-pytorch`:
 ```
 conda activate hgrn
 cd hgru-pytorch
 pip install .
 ```
 
-Install our version of fairseq:
+Finally, install our version of fairseq:
 
 ```
 cd fairseq
@@ -59,6 +59,18 @@ Build the conda environment based on the yaml file:
 conda env create --file env2.yaml
 ```
 
+If you encounter difficulties in setting up the environment, you can install the conda environment first, and then use the following command to install the pip packages:
+```
+pip install torch==1.10.0+cu111 torchvision==0.11.1+cu111 -f https://download.pytorch.org/whl/torch_stable.html
+pip install -r requirements_lra.txt
+```
+
+Finally, install `hgru-pytorch`:
+```
+conda activate lra
+cd hgru-pytorch
+pip install .
+```
 
 
 ### Autoregressive language model
