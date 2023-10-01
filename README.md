@@ -26,7 +26,7 @@ The overall network architecture is as follows:
 <div  align="center"> <img src="./hgrn.png" width = "100%" height = "100%" alt="network" align=center /></div>
 
 ## Algorithm
-The input is xt∈Rd\mathbf{x}_t \in \mathbb R^{d}, where dd is the hidden dimension. First we compute the hidden states:
+The input is $\mathbf{x}_t \in \mathbb R^{d}$, where $d$ is the hidden dimension. First we compute the hidden states:
 
 ```math
 \begin{aligned}
@@ -65,7 +65,7 @@ The full recurrence(HRU) is as follows:
 \mathbf{h}_t=\lambda_t \exp (i \theta) \cdot \mathbf{h}_{t-1}+\left(1-\lambda_t\right) \cdot \mathbf{c}_t \in \mathbb{C}^{1 \times d}.
 ```
 
-Combine ht\mathbf h_t with the output gates and projection, we get the final result:
+Combine $\mathbf h_t$ with the output gates and projection, we get the final result:
 
 ```math
 \begin{aligned}
