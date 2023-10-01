@@ -29,8 +29,8 @@ The overall network architecture is as follows:
 The input is $\mathbf{x}_t \in \mathbb R^{d}$, where $d$ is the hidden dimension. First we compute the hidden states:
 $$
 \begin{aligned}
-& \operatorname{Re}\left(\mathbf{c}_t\right)=\operatorname{SiLU}\left(\mathbf{x}_t \mathbf{W}_{c r}+\mathbf{b}_{c r}\right) \in \mathbb{R}^{1 \times d}, \\
-& \operatorname{Im}\left(\mathbf{c}_t\right)=\operatorname{SiLU}\left(\mathbf{x}_t \mathbf{W}_{c i}+\mathbf{b}_{c i}\right) \in \mathbb{R}^{1 \times d}.
+& \mathrm{Re}\left(\mathbf{c}_t\right)=\mathrm{SiLU}\left(\mathbf{x}_t \mathbf{W}_{c r}+\mathbf{b}_{c r}\right) \in \mathbb{R}^{1 \times d}, \\
+& \mathrm{Im}\left(\mathbf{c}_t\right)=\mathrm{SiLU}\left(\mathbf{x}_t \mathbf{W}_{c i}+\mathbf{b}_{c i}\right) \in \mathbb{R}^{1 \times d}.
 \end{aligned}
 $$
 
@@ -38,22 +38,22 @@ Then we compte layer dependent lower bound as follows:
 
 $$
 \begin{aligned}
-\mathbf{P} & =\left(\operatorname{Softmax}(\boldsymbol{\Gamma}, \operatorname{dim}=0) \in \mathbb{R}^{H \times d}\right. ,\\
-\gamma^k & =[\operatorname{Cumsum}(\mathbf{P}, \operatorname{dim}=0)]_k \in \mathbb{R}^{1 \times d},
+\mathbf{P} & =\left(\mathrm{Softmax}(\boldsymbol{\Gamma}, \mathrm{dim}=0) \in \mathbb{R}^{H \times d}\right. ,\\
+\gamma^k & =[\mathrm{Cumsum}(\mathbf{P}, \mathrm{dim}=0)]_k \in \mathbb{R}^{1 \times d},
 \end{aligned}
 $$
 
 where $H$ is the number of layers and 
 
 $$
-[\operatorname{Cumsum}(\mathbf{x})]_k=\sum_{i=1}^{k-1} x_i.
+[\mathrm{Cumsum}(\mathbf{x})]_k=\sum_{i=1}^{k-1} x_i.
 $$
 
 We use this lower bound to compute forget gate:
 
 $$
 \begin{aligned}
-& \mu_t=\operatorname{Sigmoid}\left(\mathbf{x}_t \mathbf{W}_\mu+\mathbf{b}_\mu\right) \in \mathbb{R}^{1 \times d}, \\
+& \mu_t=\mathrm{Sigmoid}\left(\mathbf{x}_t \mathbf{W}_\mu+\mathbf{b}_\mu\right) \in \mathbb{R}^{1 \times d}, \\
 & \lambda_t=\gamma^k+\left(1-\gamma^k\right) \odot \mu_t \in \mathbb{R}^{1 \times d}.
 \end{aligned}
 $$
@@ -69,7 +69,7 @@ Combine $\mathbf h_t$ with the output gates and projection, we get the final res
 $$
 \begin{aligned}
 & \mathbf{g}_t=\tau\left(W_g \mathbf{x}_t+b_g\right) \in \mathbb{R}^{1 \times 2 d} \\
-& \mathbf{o}_t^{\prime}=\operatorname{LayerNorm}\left(\mathbf{g}_t \odot\left[\operatorname{Re}\left(\mathbf{h}_t\right), \operatorname{Im}\left(\mathbf{h}_t\right)\right]\right) \in \mathbb{R}^{1 \times d} \\
+& \mathbf{o}_t^{\prime}=\mathrm{LayerNorm}\left(\mathbf{g}_t \odot\left[\mathrm{Re}\left(\mathbf{h}_t\right), \mathrm{Im}\left(\mathbf{h}_t\right)\right]\right) \in \mathbb{R}^{1 \times d} \\
 & \mathbf{o}_t=\mathbf{o}_t^{\prime} \mathbf{W}_o+\mathbf{b}_o \in \mathbb{R}^{1 \times d}
 \end{aligned}
 $$
