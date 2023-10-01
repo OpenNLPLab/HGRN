@@ -2,6 +2,21 @@
 
 Official implementation of Hierarchically Gated Recurrent Neural Network for Sequence Modeling. This repo does not contain specific codes, but only scripts and some instructions on how to reproduce the results of the paper. The overall directory is as follows:
 
+- [HGRN](#hgrn)
+  - [Overall Architecture](#overall-architecture)
+  - [Algorithm](#algorithm)
+  - [Experiments](#experiments)
+    - [Environment Preparation](#environment-preparation)
+      - [Env1](#env1)
+      - [Env2](#env2)
+    - [Autoregressive language model](#autoregressive-language-model)
+      - [1) Preprocess the data](#1-preprocess-the-data)
+      - [2) Train the autoregressive language model](#2-train-the-autoregressive-language-model)
+    - [Image modeling](#image-modeling)
+    - [LRA](#lra)
+      - [1) Preparation](#1-preparation)
+      - [2) Training](#2-training)
+  - [Standalone code](#standalone-code)
 
 
 ## Overall Architecture
@@ -10,7 +25,44 @@ The overall network architecture is as follows:
 
 <div  align="center"> <img src="./hgrn.png" width = "100%" height = "100%" alt="network" align=center /></div>
 
- 
+## Algorithm
+The input is $\mathbf{x}_t \in \mathbb R^{d}$, where $d$ is the hidden dimension. First we compute the hidden states:
+$$
+\begin{aligned}
+& \operatorname{Re}\left(\mathbf{c}_t\right)=\operatorname{SiLU}\left(\mathbf{x}_t \mathbf{W}_{c r}+\mathbf{b}_{c r}\right) \in \mathbb{R}^{1 \times d}, \\
+& \operatorname{Im}\left(\mathbf{c}_t\right)=\operatorname{SiLU}\left(\mathbf{x}_t \mathbf{W}_{c i}+\mathbf{b}_{c i}\right) \in \mathbb{R}^{1 \times d}.
+\end{aligned}
+$$
+Then we compte layer dependent lower bound as follows:
+$$
+\begin{aligned}
+\mathbf{P} & =\left(\operatorname{Softmax}(\boldsymbol{\Gamma}, \operatorname{dim}=0) \in \mathbb{R}^{H \times d}\right. ,\\
+\gamma^k & =[\operatorname{Cumsum}(\mathbf{P}, \operatorname{dim}=0)]_k \in \mathbb{R}^{1 \times d},
+\end{aligned}
+$$
+where $H$ is the number of layers and 
+$$
+[\operatorname{Cumsum}(\mathbf{x})]_k=\sum_{i=1}^{k-1} x_i.
+$$
+We use this lower bound to compute forget gate:
+$$
+\begin{aligned}
+& \mu_t=\operatorname{Sigmoid}\left(\mathbf{x}_t \mathbf{W}_\mu+\mathbf{b}_\mu\right) \in \mathbb{R}^{1 \times d}, \\
+& \lambda_t=\gamma^k+\left(1-\gamma^k\right) \odot \mu_t \in \mathbb{R}^{1 \times d}.
+\end{aligned}
+$$
+The full recurrence(HRU) is as follows:
+$$
+\mathbf{h}_t=\lambda_t \exp (i \theta) \cdot \mathbf{h}_{t-1}+\left(1-\lambda_t\right) \cdot \mathbf{c}_t \in \mathbb{C}^{1 \times d}.
+$$
+Combine $\mathbf h_t$ with the output gates and projection, we get the final result:
+$$
+\begin{aligned}
+& \mathbf{g}_t=\tau\left(W_g \mathbf{x}_t+b_g\right) \in \mathbb{R}^{1 \times 2 d} \\
+& \mathbf{o}_t^{\prime}=\operatorname{LayerNorm}\left(\mathbf{g}_t \odot\left[\operatorname{Re}\left(\mathbf{h}_t\right), \operatorname{Im}\left(\mathbf{h}_t\right)\right]\right) \in \mathbb{R}^{1 \times d} \\
+& \mathbf{o}_t=\mathbf{o}_t^{\prime} \mathbf{W}_o+\mathbf{b}_o \in \mathbb{R}^{1 \times d}
+\end{aligned}
+$$
 
 ## Experiments
 
