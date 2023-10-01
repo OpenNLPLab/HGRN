@@ -169,5 +169,5 @@ python script_lra.py
 
 
 ## Standalone code
-See hgru-pytorch.
+See [hgru-pytorch](https://github.com/Doraemonzzz/hgru-pytorch).
 
