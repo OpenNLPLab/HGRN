@@ -26,12 +26,12 @@ The overall network architecture is as follows:
 <div  align="center"> <img src="./hgrn.png" width = "100%" height = "100%" alt="network" align=center /></div>
 
 ## Algorithm
-The input is $\mathbf{x}_t \in \mathbb R^{d}$, where $d$ is the hidden dimension. First we compute the hidden states:
+The input is xt∈Rd\mathbf{x}_t \in \mathbb R^{d}, where dd is the hidden dimension. First we compute the hidden states:
 
-$$
+```math
 \mathrm{Re}\left(\mathbf{c}_t\right) = \mathrm{SiLU} \left(\mathbf{x}_t \mathbf{W}_{c r} + \mathbf{b}_{c r}\right) \in \mathbb{R}^{1 \times d}, \\
 \mathrm{Im}\left(\mathbf{c}_t\right) = \mathrm{SiLU} \left(\mathbf{x}_t \mathbf{W}_{c i} + \mathbf{b}_{c i}\right) \in \mathbb{R}^{1 \times d}.
-$$
+```
 
 Then we compute layer dependent lower bound as follows:
 
