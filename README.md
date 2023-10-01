@@ -27,12 +27,10 @@ The overall network architecture is as follows:
 
 ## Algorithm
 The input is $\mathbf{x}_t \in \mathbb R^{d}$, where $d$ is the hidden dimension. First we compute the hidden states:
-$$
-\begin{aligned}
+$$\begin{aligned}
 & \mathrm{Re}\left(\mathbf{c}_t\right)=\mathrm{SiLU}\left(\mathbf{x}_t \mathbf{W}_{c r}+\mathbf{b}_{c r}\right) \in \mathbb{R}^{1 \times d}, \\
 & \mathrm{Im}\left(\mathbf{c}_t\right)=\mathrm{SiLU}\left(\mathbf{x}_t \mathbf{W}_{c i}+\mathbf{b}_{c i}\right) \in \mathbb{R}^{1 \times d}.
-\end{aligned}
-$$
+\end{aligned}$$
 
 Then we compte layer dependent lower bound as follows:
 
