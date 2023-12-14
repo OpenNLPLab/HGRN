@@ -1,4 +1,14 @@
-# HGRN
+
+<h1 align="center">
+  HGRN - Hierarchically Gated Recurrent Neural Network for Sequence Modeling
+</h1>
+
+<p align="center">
+🤗 <a href="https://huggingface.co/OpenNLPLab/HGRN-150M" target="_blank">HF-150M</a> •
+🤗 <a href="https://huggingface.co/OpenNLPLab/HGRN-355M" target="_blank">HF-355M</a> •
+🤗 <a href="https://huggingface.co/OpenNLPLab/HGRN-1B" target="_blank">HF-1B</a> 
+</p>
+
 
 Official implementation of Hierarchically Gated Recurrent Neural Network for Sequence Modeling. This repo does not contain specific codes, but only scripts and some instructions on how to reproduce the results of the paper. The overall directory is as follows:
 
