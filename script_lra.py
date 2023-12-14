@@ -179,7 +179,10 @@ encoder_dict = {
 }
 
 tasks = ["aan", "imdb", "listops", "cifar", "pathfinder", "pathfinderx"]
-archs = ["hgrn"]
+# archs = ["hgru1d"] for "aan", "imdb", "listops"
+# archs = ["hgru2d"] for "cifar", "pathfinder", "pathfinderx"
+
+archs = ["hgru1d"]
 
 def to_iter(*args):
     n = len(args)
