@@ -1,8 +1,8 @@
 #! /usr/bin/env bash
 
 gpus=2
-# batch_size=$(( 2048 / $gpus ))
-batch_size=32 # for test
+batch_size=$(( 2048 / $gpus ))
+# batch_size=32 # for test
 arch=hgrn1d_vit_tiny
 # arch=hgrn1d_vit_small
 output_name=${arch}

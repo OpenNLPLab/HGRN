@@ -12,21 +12,20 @@
 
 Official implementation of Hierarchically Gated Recurrent Neural Network for Sequence Modeling. This repo does not contain specific codes, but only scripts and some instructions on how to reproduce the results of the paper. The overall directory is as follows:
 
-- [HGRN](#hgrn)
-  - [Overall Architecture](#overall-architecture)
-  - [Algorithm](#algorithm)
-  - [Experiments](#experiments)
-    - [Environment Preparation](#environment-preparation)
-      - [Env1](#env1)
-      - [Env2](#env2)
-    - [Autoregressive language model](#autoregressive-language-model)
-      - [1) Preprocess the data](#1-preprocess-the-data)
-      - [2) Train the autoregressive language model](#2-train-the-autoregressive-language-model)
-    - [Image modeling](#image-modeling)
-    - [LRA](#lra)
-      - [1) Preparation](#1-preparation)
-      - [2) Training](#2-training)
-  - [Standalone code](#standalone-code)
+- [Overall Architecture](#overall-architecture)
+- [Algorithm](#algorithm)
+- [Experiments](#experiments)
+  - [Environment Preparation](#environment-preparation)
+    - [Env1](#env1)
+    - [Env2](#env2)
+  - [Autoregressive language model](#autoregressive-language-model)
+    - [1) Preprocess the data](#1-preprocess-the-data)
+    - [2) Train the autoregressive language model](#2-train-the-autoregressive-language-model)
+  - [Image modeling](#image-modeling)
+  - [LRA](#lra)
+    - [1) Preparation](#1-preparation)
+    - [2) Training](#2-training)
+- [Standalone code](#standalone-code)
 
 
 ## Overall Architecture
@@ -206,11 +205,14 @@ You should change data_dir to preprocessed data.
 
 
 ### Image modeling
-
+First clone the following codebase:
+```
+git clone https://github.com/OpenNLPLab/im.git
+```
+Then change the `code_dir` and `data_dir` in `script_im.sh`, finally run the following script
 ```
 bash script_im.sh
 ```
-
 
 ### LRA
 
